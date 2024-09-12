@@ -5,7 +5,7 @@ This project is an AI-powered chatbot that provides both medical advice and gene
 "In this phase, we have successfully implemented the first feature from our proposal: 'Offering preliminary medical advice based on user input.' This was prioritized due to time constraints and the need to address latency issues."
 
 ## Prerequisites
-- Python 3.x
+- Python 3.10
 - Gradio for the user interface
 - Hugging Face Transformers and LangChain
 - Required models: **BioMistral-7B** (medical) and **Llama-2-7B** (general-purpose)
