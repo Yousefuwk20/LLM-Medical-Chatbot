@@ -44,8 +44,8 @@ To run the project locally, follow these steps:
 
 1. **Clone the Repository**:
     ```sh
-    git clone https://github.com/https://github.com/TabibSystem/AI-repo.git
-    cd AI-repo
+    git clone https://github.com/https://github.com/TabibSystem/AI-Repo.git
+    cd AI-Repo
     ```
 
 2. **Install the Required Packages**: Make sure you have Python installed, then run:
