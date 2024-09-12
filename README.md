@@ -115,17 +115,7 @@ A prompt template is defined to guide the chatbot's responses. It includes instr
 - **Full Model Precision**: Leveraging cloud resources will allow us to run the model at full 32-bit precision, enhancing response accuracy and effectiveness.
 - **Arabic Language Support**: By integrating a model fine-tuned on Arabic data, we can expand the chatbot's capabilities to include support for Arabic language interactions.
 
-# Detailed Documentation: Using the Deployed Model on Hugging Face
-
-This documentation provides a comprehensive guide to using the deployed model on Hugging Face. It includes instructions for accessing the model, making API requests, and troubleshooting common issues.
-
-
-### Prerequisites
-
-Before you can interact with the model, you'll need:
-
-- **Hugging Face Account**: Sign up for a free account at [Hugging Face](https://huggingface.co/join).
-- **API Token**: Obtain your API token from your Hugging Face account. You can find it under your [account settings](https://huggingface.co/settings/tokens).
+# Documentation: Using the Deployed Model on Hugging Face
 
 ### Model Overview
 
