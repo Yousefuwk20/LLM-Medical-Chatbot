@@ -1,0 +1,4 @@
+gradio
+ctransformers
+sentence-transformers
+langchain_community
