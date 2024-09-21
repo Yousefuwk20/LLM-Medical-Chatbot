@@ -1,4 +1,4 @@
-gradio
-ctransformers
 sentence-transformers
+ctransformers
 langchain_community
+pinecone
