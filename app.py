@@ -13,7 +13,7 @@ embed = load_embeddings()
 documents = load_pdf_files()
 text_chunks = split_text(documents)
 
-api_key = "f7fc405f-be0b-4604-8bbc-074a1b84f755"
+api_key = os.getenv('PINECONE_API_KEY')
 index = setup_pinecone(api_key)
 populate_pinecone(index, text_chunks, embed)
 
