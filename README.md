@@ -1,17 +1,36 @@
-# AI Chatbot Project
+# Medical Chatbot Project Documentation
 
-This project is an AI-powered chatbot that provides both medical advice and general assistance. It leverages two distinct language models to handle medical and general inquiries, ensuring versatile and empathetic responses.
+## 1. Introduction
 
-"In this phase, we have successfully implemented the first feature from our proposal: 'Offering preliminary medical advice based on user input.' This was prioritized due to time constraints and the need to address latency issues."
+### 1.1 Project Overview
+This project aims to develop an AI-powered medical chatbot capable of providing symptom-based advice, recommending doctors, and retrieving medical documents. It uses advanced natural language processing models, memory mechanisms, and document retrieval tools to ensure personalized and informative responses.
 
-## Prerequisites
-- Python 3.10
-- Gradio for the user interface
-- Hugging Face Transformers and LangChain
-- Required models: **BioMistral-7B** (medical) and **Llama-2-7B** (general-purpose)
-- wget (for model downloading)
+### 1.2 Key Features
+- **Symptom Checking**: Users can input their symptoms, and the chatbot responds with potential causes and recommended actions.
+- **Doctor Recommendation**: Based on user symptoms, the chatbot recommends which specialized doctors they should go to.
+- **Document Retrieval**: The chatbot can retrieve relevant information from a knowledge base of medical PDFs.
+- **Memory-based Conversations**: The chatbot retains conversation history to enhance the user experience.
+- **Drug Interaction Alert System**: (Planned feature) Provides warnings on potential drug interactions.
 
-## Project Structure
+---
+
+## 2. Project Setup
+### 2.1 Prerequisites
+- **Python 3.10**
+  
+- **Required Libraries**:
+  - [Hugging Face Transformers](https://huggingface.co/transformers/)
+  - [LangChain](https://python.langchain.com/)
+  - [Pinecone](https://www.pinecone.io/) (for vector storage)
+  - [Sentence-Transformers](https://www.sbert.net/) (for document embedding)
+  
+- **Required Model**:
+  - [BioMistral-7B](https://huggingface.co/MaziyarPanahi/BioMistral-7B-GGUF/) (for generating medical advice)
+
+- **Other Tools**:
+  - `wget` (for downloading models)
+
+### 2.2 Project Structure
 
 The project is structured as follows:
 ``` css
@@ -20,25 +39,57 @@ root/
 │ ├── requirements.txt 
 │ └── README.md 
 └── src/ 
-     ├── init.py 
-     ├── chatbot.py 
-     ├── memory.py 
-     └── models.py
+     ├── __init__.py 
+     ├── conversation.py 
+     ├── data_processing.py 
+     ├── models.py
+     └── pinecone_setup.py
+     └── vectorstore.py
+└── data/ 
+     ├── Cognitive Behavior Therapy.pdf
 ```
 
+### 2.3 File Descriptions
 
-### File Descriptions
-
-- **app.py**: Main entry point to run the application, launching the Gradio interface.
+- **app.py**: Main entry point to run the application.
 - **requirements.txt**: Contains the list of dependencies required to run the chatbot.
-- **README.md**: Documentation file providing a detailed overview of the project.
-- **src/**:
-  - **`__init__.py`**: Initializes the `src` package.
-  - **chatbot.py**: Contains the chatbot logic and Gradio interface functions.
-  - **memory.py**: Implements a custom memory class to manage chat history with timestamps.
-  - **models.py**: Manages loading and routing between different language models.
+- **README.md**: Documentation file providing an overview of the project.
 
-## Setup Instructions
+### src/
+  - **`__init__.py`**: Initializes the `src` package.
+  - **conversation.py**: Handles the chatbot's logic and manages conversation chains.
+  - **data_processing.py**: Loads, processes, and chunks the PDF documents into searchable text.
+  - **models.py**: Manages loading and switching between different language models, including BioMistral-7B.
+  - **pinecone_setup.py**: Sets up and configures the Pinecone vector database for document search.
+  - **vectorstore.py**: Responsible for embedding the document data into vectors and storing them in Pinecone for fast retrieval.
+
+### data/
+  - **Cognitive Behavior Therapy.pdf**: Example medical document used for embedding and document retrieval.
+
+
+### 2.4 Pinecone API Key
+
+To use Pinecone for vector storage, you need to set your Pinecone API key as an environment variable. Add your API key to the environment before running the application:
+
+```python
+import os
+
+api_key = os.getenv('PINECONE_API_KEY')
+```
+
+To set the environment variable, use the following command (replace your-api-key with your actual Pinecone API key):
+
+- Linux/macOS:
+  ```sh
+  export PINECONE_API_KEY=your-api-key
+  ```
+
+- Windows
+  ```sh
+  set PINECONE_API_KEY=your-api-key
+  ```
+
+## 3. Setup Instructions
 
 To run the project locally, follow these steps:
 
@@ -58,75 +109,102 @@ To run the project locally, follow these steps:
     python app.py
     ```
 
-## Detailed Functionality
+## 4. Technologies Used
+This section highlights the key technologies utilized in the development of the medical chatbot.
 
-### Memory Management
+- **Transformers Library**: Used for natural language processing tasks and to load the BioMistral-7B model for generating medical advice.
+- **LangChain**: Provides the structure for creating conversation chains, managing memory, and interfacing with the large language model.
+- **Sentence Transformers**: Used to create sentence embeddings from text chunks for document retrieval.
+- **Pinecone**: A vector database for storing and retrieving document embeddings. This allows the chatbot to quickly search for relevant text based on user input.
+- **PyPDFLoader**: A document loader used to extract content from PDF files and prepare them for processing.
+- **TQDM**: Used to display progress bars for various processes, such as populating the Pinecone index.
+- **UUID**: Generates unique identifiers for each text chunk when upserting to Pinecone.
 
-The `EnhancedInMemoryHistory` class in `memory.py` is a custom memory class designed to manage conversation history. It includes:
+---
 
-- **Attributes**:
-    - `messages`: Stores the exchanged messages.
-    - `timestamps`: Records the timestamps of each message.
+## 5. Data
 
-- **Methods**:
-    - `add_messages`: Adds new messages to the memory with timestamps.
-    - `get_recent_messages`: Retrieves the most recent messages.
-    - `clear`: Clears the stored messages and timestamps.
-    - `load_memory_variables`: Loads the memory variables for the conversation chain.
-    - `save_context`: Saves the context of a conversation.
-    - `clear_memory`: Alias for the clear function.
+### 5.1 Data Sources
+- **PDF Documents**: Medical PDFs were used as an initial data source. The chatbot retrieves information from these PDFs when prompted by a user query.
+- **Drug Interaction Database** (planned): DrugBank or OpenFDA databases could be integrated to enhance the drug recommendation/interaction functionality.
 
-### Model Routing
+### 5.2 Data Preprocessing
+To use the information from PDF documents in the chatbot, the following steps were performed:
+1. **Loading PDF Files**: Using the PyPDFLoader, PDFs are loaded and parsed.
+2. **Splitting Text**: The documents are split into smaller text chunks using RecursiveCharacterTextSplitter. 
+    - **Chunk Size**: 700 characters
+    - **Overlap**: 70 characters
+3. **Embedding**: Each text chunk is encoded into vector form using `SentenceTransformer("NeuML/pubmedbert-base-embeddings")`.
 
-The chatbot utilizes two different language models:
+---
 
-- **BioMistral-7B**: Specialized in handling medical-related queries.
-- **Llama-2-7B**: A general-purpose model for non-medical questions.
+## 6. Model Architecture
 
-The `route_llm` function in `models.py` uses a zero-shot classifier (`facebook/bart-large-mnli`) to determine whether a user's input is medical or general, routing the input accordingly.
+### 6.1 Language Model (LLM)
+The core of the chatbot is powered by a transformer model, specifically **BioMistral-7B** loaded via `CTransformers`. This LLM was selected for its ability to understand medical texts and generate responses based on user inputs.
 
-### Chatbot Interface
+- **Model Path**: `./BioMistral-7B.Q8_0.gguf`
+- **Model Type**: LLaMA-based model with special tuning for medical conversations.
+- **Configuration**:
+  - `max_new_tokens`: 1024 (Controls the length of generated responses)
+  - `temperature`: 0.1 (Determines randomness in response generation)
+- **Callbacks**: A streaming callback (`StreamingStdOutCallbackHandler`) is used to handle real-time response generation.
 
-The chatbot interface is built using Gradio:
+### 6.2 Embedding Model
+For encoding the text, the **SentenceTransformer** model `NeuML/pubmedbert-base-embeddings` was used. This model is fine-tuned on medical data, making it well-suited for the project’s needs.
 
-- **Function**: `chatbot_interface` in `chatbot.py`
-    - Manages input and output between the user and the chatbot.
-    - Updates chat history and provides a real-time response.
+---
 
-- **Gradio Launch**:
-    - The `launch_gradio_interface` function initializes and launches the web interface.
+## 7. Experiments and Results
 
-### Prompt Design
+### 7.1 Pinecone Integration for Vector Storage
+The project uses **Pinecone** for storing and retrieving embeddings. Pinecone allows fast search and retrieval based on semantic similarity, which is essential for responding to user queries by referencing pre-processed medical documents.
 
-A prompt template is defined to guide the chatbot's responses. It includes instructions to provide empathetic, supportive, and context-aware replies, whether dealing with medical or general inquiries.
+#### 7.1.1 Pinecone Setup
+- **Index Creation**: An index named `med-base` is created with 768 dimensions and the dotproduct metric for similarity scoring.
+  - **Cloud**: AWS
+  - **Region**: US-East-1
 
-### Deployment
-- The model has been deployed on Hugging Face for this phase of the project.
-- We created a dedicated Space for the chatbot and utilized Gradio to handle user interactions and inferences.
-- Due to budget constraints, we opted for the free resources plan available on Hugging Face.
+#### 7.1.2 Document Embedding and Upsert
+- Text chunks from the loaded PDF are encoded and inserted into Pinecone in batches (up to 100 at a time). Each chunk is associated with metadata that includes the chunk number and the source file it came from.
+  - **Batch Limit**: 100 chunks at a time
+  - **Metadata**: Each chunk has metadata like the source PDF and chunk number.
 
-### Cons
-- **Latency in Model Performance**: The current setup experiences latency issues due to insufficient hardware and budget constraints.
-- **Reduced Model Precision**: The chatbot operates with a quantized (4-bit) model instead of the more accurate 32-bit model, leading to potential reductions in response quality.
-- **Lack of Arabic Language Support**: The chatbot currently does not support the Arabic language, as it hasn't been trained or fine-tuned on Arabic data.
-    
-### It's Future Improvements
-- **Optimized GPU Utilization**: Transitioning to optimized GPUs in the cloud can significantly reduce latency and improve overall performance.
-- **Full Model Precision**: Leveraging cloud resources will allow us to run the model at full 32-bit precision, enhancing response accuracy and effectiveness.
-- **Arabic Language Support**: By integrating a model fine-tuned on Arabic data, we can expand the chatbot's capabilities to include support for Arabic language interactions.
+### 7.2 Memory for Long-term Interactions
+To enable more natural and coherent conversations, the chatbot uses a **ConversationSummaryBufferMemory**. This memory keeps track of the conversation history and summarizes it over time. The memory is session-based, ensuring personalized interactions for each user session.
 
-# Documentation: Using the Deployed Model on Hugging Face
+- **Session ID**: A unique ID is assigned to each conversation to track its history.
+- **Max Token Limit**: 1024 tokens (memory is limited to avoid overwhelming the model with too much information).
 
-### Model Overview
+---
 
-The deployed model is available at the following Hugging Face Space:
+## 8. User Guide
 
-- **URL**: [Medical Chatbot on Hugging Face](https://huggingface.co/spaces/Yousefsalem/Medical-Chatbot)
+### 8.1 How to Use the Chatbot
+Users can interact with the chatbot by asking symptom-related questions, requesting doctor recommendations, or querying medical PDFs.
 
-This model is designed to provide preliminary medical advice based on user input.
+- **Symptom Checking**:
+  - Input example: "I have a headache and nausea."
+  - Response: The chatbot provides potential causes and medical advice.
 
-## Accessing the Model via API
+- **Document Retrieval**:
+  - Input example: "What are the treatments for anxiety in CBT?"
+  - Response: The chatbot retrieves relevant text chunks from the **Cognitive Behavioral Therapy.pdf** document.
 
-### Base URL
-```plaintext
-https://huggingface.co/spaces/Yousefsalem/Medical-Chatbot
+### 8.2 Customizing the Chatbot
+Developers can modify the chatbot to suit their needs:
+- **Prompt Tuning**: Adjust the `PromptTemplate` to change the style of responses.
+- **Memory Size**: Modify the token limit for conversation history in `ConversationSummaryBufferMemory`.
+- **Adding New Documents**: New PDF files can be added to the system for retrieval. Follow the same steps for loading and splitting PDFs.
+
+---
+
+## 9. Conclusion
+This project has demonstrated the successful integration of AI-powered language models, document retrieval, and long-term memory for a medical chatbot. The current system allows for:
+- Real-time symptom checking.
+- Retrieval of medical knowledge from PDF files.
+- Personalized interactions using memory-based conversations.
+
+### Future Directions
+- **Drug Interaction System**: Implement a feature that warns users about potential drug interactions using databases like DrugBank.
+- **Expanding the Knowledge Base**: Add more medical documents or integrate external APIs to broaden the chatbot’s knowledge.
