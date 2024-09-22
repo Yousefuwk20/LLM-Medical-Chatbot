@@ -7,8 +7,6 @@ def setup_vectorstore(index):
 
     Args:
         index (Pinecone.Index): Initialized Pinecone index.
-        embed_model (SentenceTransformerEmbeddings): Model for embedding text queries.
-
     Returns:
         vectorstore (LangchainPinecone): A Pinecone-based vector store for retrieval.
     """
